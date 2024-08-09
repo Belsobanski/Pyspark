@@ -1,0 +1,83 @@
+Condições com operadores boleanos
+1 minute ago (1s)
+82
+82
+# Retorna linhas das colunas 'InvoiceNo' e 'Description' onde 'InvoiceNo' é diferente de 536365
+from pyspark.sql.functions import col
+df.where(col("InvoiceNo") != 536365)\
+.select("InvoiceNo", "Description")\
+.show(10)
+(1) Spark Jobs
+ 
++---------+--------------------+
+|InvoiceNo|         Description|
++---------+--------------------+
+|   536366|HAND WARMER UNION...|
+|   536366|HAND WARMER RED P...|
+|   536367|ASSORTED COLOUR B...|
+|   536367|POPPY'S PLAYHOUSE...|
+|   536367|POPPY'S PLAYHOUSE...|
+|   536367|FELTCRAFT PRINCES...|
+|   536367|IVORY KNITTED MUG...|
+|   536367|BOX OF 6 ASSORTED...|
+|   536367|BOX OF VINTAGE JI...|
+|   536367|BOX OF VINTAGE AL...|
++---------+--------------------+
+only showing top 10 rows
+
+just now (<1s)
+83
+83
+# usando o operador boleando com um predicado em uma expressão.
+df.where("InvoiceNo <> 536365").show(5)
+(1) Spark Jobs
+ 
++---------+---------+--------------------+--------+-------------------+---------+----------+--------------+
+|InvoiceNo|StockCode|         Description|Quantity|        InvoiceDate|UnitPrice|CustomerID|       Country|
++---------+---------+--------------------+--------+-------------------+---------+----------+--------------+
+|   536366|    22633|HAND WARMER UNION...|       6|2010-12-01 08:28:00|     1.85|   17850.0|United Kingdom|
+|   536366|    22632|HAND WARMER RED P...|       6|2010-12-01 08:28:00|     1.85|   17850.0|United Kingdom|
+|   536367|    84879|ASSORTED COLOUR B...|      32|2010-12-01 08:34:00|     1.69|   13047.0|United Kingdom|
+|   536367|    22745|POPPY'S PLAYHOUSE...|       6|2010-12-01 08:34:00|      2.1|   13047.0|United Kingdom|
+|   536367|    22748|POPPY'S PLAYHOUSE...|       6|2010-12-01 08:34:00|      2.1|   13047.0|United Kingdom|
++---------+---------+--------------------+--------+-------------------+---------+----------+--------------+
+only showing top 5 rows
+
+just now (1s)
+84
+84
+# usando o operador boleando com um predicado em uma expressão.
+df.where("InvoiceNo == 536365").show(5)
+(1) Spark Jobs
+ 
++---------+---------+--------------------+--------+-------------------+---------+----------+--------------+
+|InvoiceNo|StockCode|         Description|Quantity|        InvoiceDate|UnitPrice|CustomerID|       Country|
++---------+---------+--------------------+--------+-------------------+---------+----------+--------------+
+|   536365|   85123A|WHITE HANGING HEA...|       6|2010-12-01 08:26:00|     2.55|   17850.0|United Kingdom|
+|   536365|    71053| WHITE METAL LANTERN|       6|2010-12-01 08:26:00|     3.39|   17850.0|United Kingdom|
+|   536365|   84406B|CREAM CUPID HEART...|       8|2010-12-01 08:26:00|     2.75|   17850.0|United Kingdom|
+|   536365|   84029G|KNITTED UNION FLA...|       6|2010-12-01 08:26:00|     3.39|   17850.0|United Kingdom|
+|   536365|   84029E|RED WOOLLY HOTTIE...|       6|2010-12-01 08:26:00|     3.39|   17850.0|United Kingdom|
++---------+---------+--------------------+--------+-------------------+---------+----------+--------------+
+only showing top 5 rows
+
+just now (<1s)
+85
+85
+# Entendendo a ordem dos operadores boleanos
+from pyspark.sql.functions import instr
+priceFilter = col("UnitPrice") > 600
+descripFilter = instr(df.Description, "POSTAGE") >= 1
+just now (1s)
+86
+86
+# aplicando os operadores como filtros
+df.where(df.StockCode.isin("DOT")).where(priceFilter | descripFilter).show()
+(1) Spark Jobs
+ 
++---------+---------+--------------+--------+-------------------+---------+----------+--------------+
+|InvoiceNo|StockCode|   Description|Quantity|        InvoiceDate|UnitPrice|CustomerID|       Country|
++---------+---------+--------------+--------+-------------------+---------+----------+--------------+
+|   536544|      DOT|DOTCOM POSTAGE|       1|2010-12-01 14:32:00|   569.77|      null|United Kingdom|
+|   536592|      DOT|DOTCOM POSTAGE|       1|2010-12-01 17:06:00|   607.49|      null|United Kingdom|
++---------+---------+--------------+--------+-------------------+---------+----------+--------------+
