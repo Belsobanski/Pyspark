@@ -81,3 +81,74 @@ df.where(df.StockCode.isin("DOT")).where(priceFilter | descripFilter).show()
 |   536544|      DOT|DOTCOM POSTAGE|       1|2010-12-01 14:32:00|   569.77|      null|United Kingdom|
 |   536592|      DOT|DOTCOM POSTAGE|       1|2010-12-01 17:06:00|   607.49|      null|United Kingdom|
 +---------+---------+--------------+--------+-------------------+---------+----------+--------------+
+
+# usando sql tambem
+
+
+10:14 PM (<1s)
+87
+87
+# Create a view ou tabela temporária.
+df.createOrReplaceTempView("dfTable")
+just now (1s)
+88
+88
+%sql
+-- Aplicando a mesmo código em SQL
+SELECT * 
+FROM dfTable 
+WHERE StockCode in ("DOT")
+AND(UnitPrice > 600 OR instr(Description, "POSTAGE") >= 1)
+(1) Spark Jobs
+ 
+_sqldf:pyspark.sql.dataframe.DataFrame = [InvoiceNo: string, StockCode: string ... 6 more fields]
+Table
+2 rows
+|
+1.13 seconds runtime
+Refreshed now
+just now (<1s)
+89
+89
+# Combinando filtros e operadores boleanos
+from pyspark.sql.functions import instr
+DOTCodeFilter = col("StockCode") == "DOT"
+priceFilter = col("UnitPrice") > 600
+descripFilter = instr(col("Description"), "POSTAGE") >= 1
+just now (1s)
+90
+90
+# Combinando filtros e operadores boleanos
+df.withColumn("isExpensive", DOTCodeFilter & (priceFilter | descripFilter))\
+.where("isExpensive")\
+.select("unitPrice", "isExpensive").show(5)
+(1) Spark Jobs
+ 
++---------+-----------+
+|unitPrice|isExpensive|
++---------+-----------+
+|   569.77|       true|
+|   607.49|       true|
++---------+-----------+
+
+just now (1s)
+91
+91
+%sql
+-- Aplicando as mesmas ideias usando SQL
+SELECT UnitPrice, (StockCode = 'DOT' AND
+(UnitPrice > 600 OR instr(Description, "POSTAGE") >= 1)) as isExpensive
+FROM dfTable
+WHERE (StockCode = 'DOT' AND
+(UnitPrice > 600 OR instr(Description, "POSTAGE") >= 1))
+(1) Spark Jobs
+ 
+_sqldf:pyspark.sql.dataframe.DataFrame = [UnitPrice: double, isExpensive: boolean]
+Table
+2 rows
+|
+0.51 seconds runtime
+Refreshed now
+This result is stored as _sqldf and can be used in other Python cells.
+
+
