@@ -1,0 +1,56 @@
+
+Last execution failed
+53
+53
+123456
+# lendo os arquivos de dados de voos (2010_summary.csv...2015_summary.csv)
+df = spark\
+.read\
+.option("inferSchema", "True")\
+.option("header", "True")\
+.csv("/FileStore/tables/bronze2/*.csv")
+Last execution failed
+54
+54
+12
+# imprime 10 linhas do dataframe
+df.show(10)
+Last execution failed
+55
+55
+12
+# imprime a quantidade de registros do dataframe
+df.count()
+Last execution failed
+56
+56
+12
+from pyspark.sql.functions import lower, upper, col
+df.select(col("DEST_COUNTRY_NAME"),lower(col("DEST_COUNTRY_NAME")),upper(lower(col("DEST_COUNTRY_NAME")))).show(10)
+Last execution failed
+57
+57
+123
+# remove espaços em branco a esquerda
+from pyspark.sql.functions import ltrim
+df.select(ltrim(col("DEST_COUNTRY_NAME"))).show(2)
+Last execution failed
+58
+58
+123
+# remove espaços a direita
+from pyspark.sql.functions import rtrim
+df.select(rtrim(col("DEST_COUNTRY_NAME"))).show(2)
+Last execution failed
+59
+59
+123456789
+# todas as operações juntas..
+# a função lit cria uma coluna na cópia do dataframe
+from pyspark.sql.functions import lit, ltrim, rtrim, rpad, lpad, trim
+df.select(
+ltrim(lit(" HELLO ")).alias("ltrim"),
+rtrim(lit(" HELLO ")).alias("rtrim"),
+trim(lit(" HELLO ")).alias("trim"),
+lpad(lit("HELLO"), 3, " ").alias("lp"),
+rpad(lit("HELLO"), 10, " ").alias("rp")).show(2)
