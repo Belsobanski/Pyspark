@@ -1,50 +1,108 @@
-
-Last execution failed
+Manipulando Strings
+2 minutes ago (3s)
 53
 53
-123456
 # lendo os arquivos de dados de voos (2010_summary.csv...2015_summary.csv)
 df = spark\
 .read\
 .option("inferSchema", "True")\
 .option("header", "True")\
 .csv("/FileStore/tables/bronze2/*.csv")
-Last execution failed
+(2) Spark Jobs
+ 
+df:pyspark.sql.dataframe.DataFrame
+DEST_COUNTRY_NAME:string
+ORIGIN_COUNTRY_NAME:string
+count:integer
+2 minutes ago (1s)
 54
 54
-12
 # imprime 10 linhas do dataframe
 df.show(10)
-Last execution failed
+(1) Spark Jobs
+ 
++-----------------+-------------------+-----+
+|DEST_COUNTRY_NAME|ORIGIN_COUNTRY_NAME|count|
++-----------------+-------------------+-----+
+|    United States|            Romania|    1|
+|    United States|            Ireland|  264|
+|    United States|              India|   69|
+|            Egypt|      United States|   24|
+|Equatorial Guinea|      United States|    1|
+|    United States|          Singapore|   25|
+|    United States|            Grenada|   54|
+|       Costa Rica|      United States|  477|
+|          Senegal|      United States|   29|
+|    United States|   Marshall Islands|   44|
++-----------------+-------------------+-----+
+only showing top 10 rows
+
+2 minutes ago (1s)
 55
 55
-12
 # imprime a quantidade de registros do dataframe
 df.count()
-Last execution failed
+(2) Spark Jobs
+ 
+Out[25]: 1502
+2 minutes ago (1s)
 56
 56
-12
 from pyspark.sql.functions import lower, upper, col
 df.select(col("DEST_COUNTRY_NAME"),lower(col("DEST_COUNTRY_NAME")),upper(lower(col("DEST_COUNTRY_NAME")))).show(10)
-Last execution failed
+(1) Spark Jobs
+ 
++-----------------+------------------------+-------------------------------+
+|DEST_COUNTRY_NAME|lower(DEST_COUNTRY_NAME)|upper(lower(DEST_COUNTRY_NAME))|
++-----------------+------------------------+-------------------------------+
+|    United States|           united states|                  UNITED STATES|
+|    United States|           united states|                  UNITED STATES|
+|    United States|           united states|                  UNITED STATES|
+|            Egypt|                   egypt|                          EGYPT|
+|Equatorial Guinea|       equatorial guinea|              EQUATORIAL GUINEA|
+|    United States|           united states|                  UNITED STATES|
+|    United States|           united states|                  UNITED STATES|
+|       Costa Rica|              costa rica|                     COSTA RICA|
+|          Senegal|                 senegal|                        SENEGAL|
+|    United States|           united states|                  UNITED STATES|
++-----------------+------------------------+-------------------------------+
+only showing top 10 rows
+
+2 minutes ago (1s)
 57
 57
-123
 # remove espaços em branco a esquerda
 from pyspark.sql.functions import ltrim
 df.select(ltrim(col("DEST_COUNTRY_NAME"))).show(2)
-Last execution failed
+(1) Spark Jobs
+ 
++------------------------+
+|ltrim(DEST_COUNTRY_NAME)|
++------------------------+
+|           United States|
+|           United States|
++------------------------+
+only showing top 2 rows
+
+1 minute ago (<1s)
 58
 58
-123
 # remove espaços a direita
 from pyspark.sql.functions import rtrim
 df.select(rtrim(col("DEST_COUNTRY_NAME"))).show(2)
-Last execution failed
+(1) Spark Jobs
+ 
++------------------------+
+|rtrim(DEST_COUNTRY_NAME)|
++------------------------+
+|           United States|
+|           United States|
++------------------------+
+only showing top 2 rows
+
+1 minute ago (1s)
 59
 59
-123456789
 # todas as operações juntas..
 # a função lit cria uma coluna na cópia do dataframe
 from pyspark.sql.functions import lit, ltrim, rtrim, rpad, lpad, trim
@@ -54,3 +112,13 @@ rtrim(lit(" HELLO ")).alias("rtrim"),
 trim(lit(" HELLO ")).alias("trim"),
 lpad(lit("HELLO"), 3, " ").alias("lp"),
 rpad(lit("HELLO"), 10, " ").alias("rp")).show(2)
+(1) Spark Jobs
+ 
++------+------+-----+---+----------+
+| ltrim| rtrim| trim| lp|        rp|
++------+------+-----+---+----------+
+|HELLO | HELLO|HELLO|HEL|HELLO     |
+|HELLO | HELLO|HELLO|HEL|HELLO     |
++------+------+-----+---+----------+
+only showing top 2 rows
+
